@@ -10,8 +10,10 @@ import '../../theme/duty_planner_theme.dart';
 class PlanTypeScreen extends StatelessWidget {
   final DutyPlanType selectedType;
   final DateTime startDate;
+  final DateTime endDate;
   final Function(DutyPlanType) onTypeChanged;
   final Function(DateTime) onStartDateChanged;
+  final Function(DateTime) onEndDateChanged;
   final VoidCallback onNext;
   final VoidCallback onBack;
 
@@ -19,8 +21,10 @@ class PlanTypeScreen extends StatelessWidget {
     super.key,
     required this.selectedType,
     required this.startDate,
+    required this.endDate,
     required this.onTypeChanged,
     required this.onStartDateChanged,
+    required this.onEndDateChanged,
     required this.onNext,
     required this.onBack,
   });
@@ -46,8 +50,8 @@ class PlanTypeScreen extends StatelessWidget {
               _buildPlanTypeCards(context),
               const SizedBox(height: 24),
 
-              // Başlangıç tarihi seçimi
-              _buildDatePicker(context),
+              // Başlangıç ve bitiş tarihi seçimi
+              _buildDatePickers(context),
               const SizedBox(height: 24),
 
               // Özet
@@ -73,7 +77,7 @@ class PlanTypeScreen extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: onNext,
+                      onPressed: _isValidDateRange() ? onNext : null,
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -91,6 +95,11 @@ class PlanTypeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Tarih aralığı geçerli mi kontrol et
+  bool _isValidDateRange() {
+    return !endDate.isBefore(startDate);
   }
 
   Widget _buildHeader() {
@@ -245,8 +254,9 @@ class PlanTypeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDatePicker(BuildContext context) {
+  Widget _buildDatePickers(BuildContext context) {
     final dateFormat = DateFormat('dd MMMM yyyy', 'tr');
+    final isValidRange = _isValidDateRange();
 
     return Card(
       child: Padding(
@@ -254,13 +264,14 @@ class PlanTypeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Başlangıç Tarihi
             const Text(
               'Başlangıç Tarihi',
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             InkWell(
-              onTap: () => _selectDate(context),
+              onTap: () => _selectStartDate(context),
               borderRadius: BorderRadius.circular(8),
               child: Container(
                 padding: const EdgeInsets.all(16),
@@ -288,6 +299,64 @@ class PlanTypeScreen extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 16),
+
+            // Bitiş Tarihi
+            const Text(
+              'Bitiş Tarihi',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            InkWell(
+              onTap: () => _selectEndDate(context),
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: isValidRange
+                        ? DutyPlannerColors.tableBorder
+                        : DutyPlannerColors.error,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.event,
+                      color: isValidRange
+                          ? DutyPlannerColors.primary
+                          : DutyPlannerColors.error,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      dateFormat.format(endDate),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: isValidRange
+                            ? DutyPlannerColors.textPrimary
+                            : DutyPlannerColors.error,
+                      ),
+                    ),
+                    const Spacer(),
+                    const Icon(
+                      Icons.arrow_drop_down,
+                      color: DutyPlannerColors.textSecondary,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Hata mesajı
+            if (!isValidRange) ...[
+              const SizedBox(height: 8),
+              const Text(
+                'Bitiş tarihi başlangıç tarihinden önce olamaz',
+                style: TextStyle(color: DutyPlannerColors.error, fontSize: 12),
+              ),
+            ],
           ],
         ),
       ),
@@ -296,7 +365,6 @@ class PlanTypeScreen extends StatelessWidget {
 
   Widget _buildSummary(BuildContext context) {
     final dateFormat = DateFormat('dd.MM.yyyy');
-    final endDate = _calculateEndDate();
 
     return Card(
       color: DutyPlannerColors.tableHeader,
@@ -346,7 +414,7 @@ class PlanTypeScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _selectDate(BuildContext context) async {
+  Future<void> _selectStartDate(BuildContext context) async {
     final picked = await showDatePicker(
       context: context,
       initialDate: startDate,
@@ -360,23 +428,23 @@ class PlanTypeScreen extends StatelessWidget {
     }
   }
 
-  DateTime _calculateEndDate() {
-    switch (selectedType) {
-      case DutyPlanType.weekly:
-        var end = startDate;
-        while (end.weekday != DateTime.friday) {
-          end = end.add(const Duration(days: 1));
-        }
-        return end;
-      case DutyPlanType.monthly:
-        return DateTime(startDate.year, startDate.month + 1, 0);
-      case DutyPlanType.yearly:
-        return DateTime(startDate.year, 12, 31);
+  Future<void> _selectEndDate(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: endDate,
+      firstDate: startDate,
+      lastDate: DateTime.now().add(const Duration(days: 730)),
+      locale: const Locale('tr', 'TR'),
+    );
+
+    if (picked != null) {
+      onEndDateChanged(picked);
     }
   }
 
   int _calculateWorkDays() {
-    final endDate = _calculateEndDate();
+    if (endDate.isBefore(startDate)) return 0;
+
     int count = 0;
     var current = startDate;
 

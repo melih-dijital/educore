@@ -13,6 +13,7 @@ class PlanGenerationScreen extends StatefulWidget {
   final List<Floor> floors;
   final DutyPlanType planType;
   final DateTime startDate;
+  final DateTime endDate;
   final Function(DutyPlan) onPlanGenerated;
   final DutyPlan? generatedPlan;
   final VoidCallback onNext;
@@ -24,6 +25,7 @@ class PlanGenerationScreen extends StatefulWidget {
     required this.floors,
     required this.planType,
     required this.startDate,
+    required this.endDate,
     required this.onPlanGenerated,
     required this.generatedPlan,
     required this.onNext,
@@ -330,6 +332,7 @@ class _PlanGenerationScreenState extends State<PlanGenerationScreen> {
         floors: widget.floors,
         planType: widget.planType,
         startDate: widget.startDate,
+        endDate: widget.endDate,
       );
 
       widget.onPlanGenerated(plan);

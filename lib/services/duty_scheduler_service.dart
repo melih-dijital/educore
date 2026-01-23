@@ -23,6 +23,7 @@ class DutySchedulerService {
     required List<Floor> floors,
     required DutyPlanType planType,
     required DateTime startDate,
+    DateTime? endDate, // Kullanıcının seçtiği bitiş tarihi (opsiyonel)
   }) {
     if (teachers.isEmpty) {
       throw ArgumentError('En az bir öğretmen gerekli');
@@ -31,11 +32,11 @@ class DutySchedulerService {
       throw ArgumentError('En az bir kat gerekli');
     }
 
-    // Bitiş tarihini hesapla
-    final endDate = _calculateEndDate(startDate, planType);
+    // Bitiş tarihini hesapla - kullanıcı seçtiyse onu kullan, yoksa plan türüne göre hesapla
+    final effectiveEndDate = endDate ?? _calculateEndDate(startDate, planType);
 
     // Tüm okul günlerini hesapla (Pazartesi-Cuma)
-    final schoolDays = _getSchoolDays(startDate, endDate);
+    final schoolDays = _getSchoolDays(startDate, effectiveEndDate);
 
     // Sıralı katları al
     final sortedFloors = List<Floor>.from(floors)
@@ -122,7 +123,7 @@ class DutySchedulerService {
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       type: planType,
       startDate: startDate,
-      endDate: endDate,
+      endDate: effectiveEndDate,
       assignments: assignments,
     );
   }

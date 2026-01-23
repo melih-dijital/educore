@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'screens/exam_simulation_screen.dart';
+import 'screens/butterfly_exam/butterfly_exam_home.dart';
 import 'screens/duty_planner/duty_planner_home_screen.dart';
 import 'screens/auth/auth_gate.dart';
 import 'screens/auth/login_screen.dart';
@@ -37,13 +38,23 @@ class MyApp extends StatelessWidget {
       title: 'OkulAsistan Pro',
       debugShowCheckedModeBanner: false,
       theme: DutyPlannerTheme.theme,
+      // Türkçe localization için
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('tr', 'TR'), Locale('en', 'US')],
+      locale: const Locale('tr', 'TR'),
       home: const AuthGate(child: MainMenuScreen()),
       routes: {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/school': (context) => const SchoolManagementScreen(),
-        '/exam-simulation': (context) => const ExamSimulationScreen(),
+        '/butterfly-exam': (context) => const ButterflyExamHomeScreen(),
+        '/exam-simulation': (context) =>
+            const ButterflyExamHomeScreen(), // Yeni sisteme yönlendir
         '/duty-planner': (context) => const DutyPlannerHomeScreen(),
       },
     );

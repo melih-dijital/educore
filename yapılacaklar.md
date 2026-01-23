@@ -1,10 +1,19 @@
-Giriş yaptıktan sonra ana sayfaya yönlendilime.
-Okul Yönetimi için senesel kayıt.
-Öğretmen paneli ve kod ile giriş
-Kat nöbetçi öğretmen planlayıcıda takvim çalışmıyor.
+Acil Yapılacaklar:
+Okul Yönetimi Salon kaydı yapılırken salonu canlı olarak önizleme eklenecek.
+Sıra olarak belirtilen kutucuklar renkli olacak
+Kelebek sistemi dağıtımın sonucunda hangi öğrenci hangi sınıfta olduğunu yazan bir kağıt olacak.
+ Türkçe karakter desteği eklenecek.
 
 Düşük aciliyet
 E-posta adresi değiştirme.
 Supabase smtp e-postalarının düzenlenmesi.
-Profil fotoğrafı eklenecek.
+Profil fotoğrafı ekleme olağanı tanımlanacak.
 Giriş sayfasındaki google ve github iconları gerçek iconlar ile değiştirilecek
+Öğretmen paneli ve kod ile giriş
+
+UI:
+Kilidlerin üstüne gelince animasyon olması. Kilidin ortada büyüyüp sarı renge dönüşmesi
+Giriş sayfası animasyon ile gelmesi
+Giriş sayfasının arkasının transparan olması
+Footer (alt menü) eklenmesi
+Sağ üsteki ksımdaki profil işaretine gelince altında bir menü olması.

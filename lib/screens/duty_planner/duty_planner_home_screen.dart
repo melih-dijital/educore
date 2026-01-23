@@ -27,6 +27,9 @@ class _DutyPlannerHomeScreenState extends State<DutyPlannerHomeScreen> {
   List<Floor> _floors = [];
   DutyPlanType _planType = DutyPlanType.weekly;
   DateTime _startDate = DateTime.now();
+  DateTime _endDate = DateTime.now().add(
+    const Duration(days: 7),
+  ); // Varsayılan: 1 hafta sonrası
   DutyPlan? _generatedPlan;
 
   @override
@@ -85,11 +88,15 @@ class _DutyPlannerHomeScreenState extends State<DutyPlannerHomeScreen> {
         return PlanTypeScreen(
           selectedType: _planType,
           startDate: _startDate,
+          endDate: _endDate,
           onTypeChanged: (type) {
             setState(() => _planType = type);
           },
           onStartDateChanged: (date) {
             setState(() => _startDate = date);
+          },
+          onEndDateChanged: (date) {
+            setState(() => _endDate = date);
           },
           onNext: () => _goToStep(3),
           onBack: () => _goToStep(1),
@@ -100,6 +107,7 @@ class _DutyPlannerHomeScreenState extends State<DutyPlannerHomeScreen> {
           floors: _floors,
           planType: _planType,
           startDate: _startDate,
+          endDate: _endDate,
           onPlanGenerated: (plan) {
             setState(() => _generatedPlan = plan);
           },
@@ -144,6 +152,7 @@ class _DutyPlannerHomeScreenState extends State<DutyPlannerHomeScreen> {
       _floors = [];
       _planType = DutyPlanType.weekly;
       _startDate = DateTime.now();
+      _endDate = DateTime.now().add(const Duration(days: 7));
       _generatedPlan = null;
     });
   }

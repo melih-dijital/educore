@@ -300,7 +300,11 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-      // Başarılı giriş - AuthGate otomatik yönlendirecek
+
+      if (mounted) {
+        // Başarılı giriş - Ana sayfaya yönlendir ve geçmişi temizle
+        Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+      }
     } on AuthException catch (e) {
       setState(() {
         _errorMessage = _getErrorMessage(e.message);
@@ -325,7 +329,12 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      await _authService.signInWithGoogle();
+      final success = await _authService.signInWithGoogle();
+      if (success && mounted) {
+        Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+      } else if (!success) {
+        throw Exception('Google login failed');
+      }
     } catch (e) {
       setState(() {
         _errorMessage = 'Google ile giriş başarısız oldu.';
@@ -346,7 +355,12 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      await _authService.signInWithGithub();
+      final success = await _authService.signInWithGithub();
+      if (success && mounted) {
+        Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+      } else if (!success) {
+        throw Exception('GitHub login failed');
+      }
     } catch (e) {
       setState(() {
         _errorMessage = 'GitHub ile giriş başarısız oldu.';
