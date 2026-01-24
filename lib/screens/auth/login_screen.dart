@@ -34,12 +34,27 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Şeffaf arka plan
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
+          // Şeffaf gradient arka plan
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [DutyPlannerColors.primary, DutyPlannerColors.primaryDark],
+            colors: [
+              DutyPlannerColors.primary.withValues(alpha: 0.85),
+              DutyPlannerColors.primaryDark.withValues(alpha: 0.9),
+            ],
           ),
         ),
         child: SafeArea(
@@ -48,10 +63,22 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: const EdgeInsets.all(24),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 400),
-                child: Card(
-                  elevation: 8,
-                  shape: RoundedRectangleBorder(
+                child: Container(
+                  decoration: BoxDecoration(
+                    // Glassmorphism efekti
+                    color: Colors.white.withValues(alpha: 0.95),
                     borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 20,
+                        spreadRadius: 5,
+                      ),
+                    ],
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      width: 1.5,
+                    ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(32),

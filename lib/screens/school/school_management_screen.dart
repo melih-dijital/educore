@@ -2130,6 +2130,110 @@ class _SchoolManagementScreenState extends State<SchoolManagementScreen>
     );
   }
 
+  /// Salon önizleme widget'ı - Tahta ve koltuk grid'i gösterir
+  Widget _buildRoomPreviewWidget(int rowCount, int columnCount) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: DutyPlannerColors.tableHeader,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: DutyPlannerColors.tableBorder),
+      ),
+      child: Column(
+        children: [
+          // Önizleme başlığı
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.visibility, size: 16, color: Colors.deepPurple),
+              const SizedBox(width: 8),
+              const Text(
+                'Salon Önizlemesi',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.deepPurple,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Tahta
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade600,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: const Center(
+              child: Text(
+                'TAHTA',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          // Grid - Koltuklar
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Column(
+              children: List.generate(rowCount.clamp(1, 10), (row) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(columnCount.clamp(1, 10), (col) {
+                    return Container(
+                      width: 24,
+                      height: 20,
+                      margin: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurple.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(3),
+                        border: Border.all(
+                          color: Colors.deepPurple.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${row * columnCount + col + 1}',
+                          style: TextStyle(
+                            fontSize: 7,
+                            color: Colors.deepPurple.withValues(alpha: 0.7),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                );
+              }),
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Kapasite bilgisi
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.deepPurple.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              '$rowCount sıra × $columnCount sütun = ${rowCount * columnCount} koltuk',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.deepPurple,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showAddRoomDialog() {
     final nameController = TextEditingController(
       text: 'Salon ${_rooms.length + 1}',
@@ -2142,58 +2246,63 @@ class _SchoolManagementScreenState extends State<SchoolManagementScreen>
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           title: const Text('Salon Ekle'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Salon Adı',
-                  prefixIcon: Icon(Icons.meeting_room),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Salon Adı',
+                    prefixIcon: Icon(Icons.meeting_room),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Sıra: $rowCount'),
-                        Slider(
-                          value: rowCount.toDouble(),
-                          min: 1,
-                          max: 15,
-                          divisions: 14,
-                          onChanged: (v) =>
-                              setDialogState(() => rowCount = v.round()),
-                        ),
-                      ],
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Sıra: $rowCount'),
+                          Slider(
+                            value: rowCount.toDouble(),
+                            min: 1,
+                            max: 15,
+                            divisions: 14,
+                            onChanged: (v) =>
+                                setDialogState(() => rowCount = v.round()),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Sütun: $columnCount'),
-                        Slider(
-                          value: columnCount.toDouble(),
-                          min: 1,
-                          max: 12,
-                          divisions: 11,
-                          onChanged: (v) =>
-                              setDialogState(() => columnCount = v.round()),
-                        ),
-                      ],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Sütun: $columnCount'),
+                          Slider(
+                            value: columnCount.toDouble(),
+                            min: 1,
+                            max: 12,
+                            divisions: 11,
+                            onChanged: (v) =>
+                                setDialogState(() => columnCount = v.round()),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Text(
-                'Kapasite: ${rowCount * columnCount} koltuk',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
+                  ],
+                ),
+                Text(
+                  'Kapasite: ${rowCount * columnCount} koltuk',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                // Salon Önizlemesi
+                _buildRoomPreviewWidget(rowCount, columnCount),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -2233,58 +2342,63 @@ class _SchoolManagementScreenState extends State<SchoolManagementScreen>
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           title: const Text('Salon Düzenle'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Salon Adı',
-                  prefixIcon: Icon(Icons.meeting_room),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Salon Adı',
+                    prefixIcon: Icon(Icons.meeting_room),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Sıra: $rowCount'),
-                        Slider(
-                          value: rowCount.toDouble(),
-                          min: 1,
-                          max: 15,
-                          divisions: 14,
-                          onChanged: (v) =>
-                              setDialogState(() => rowCount = v.round()),
-                        ),
-                      ],
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Sıra: $rowCount'),
+                          Slider(
+                            value: rowCount.toDouble(),
+                            min: 1,
+                            max: 15,
+                            divisions: 14,
+                            onChanged: (v) =>
+                                setDialogState(() => rowCount = v.round()),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Sütun: $columnCount'),
-                        Slider(
-                          value: columnCount.toDouble(),
-                          min: 1,
-                          max: 12,
-                          divisions: 11,
-                          onChanged: (v) =>
-                              setDialogState(() => columnCount = v.round()),
-                        ),
-                      ],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Sütun: $columnCount'),
+                          Slider(
+                            value: columnCount.toDouble(),
+                            min: 1,
+                            max: 12,
+                            divisions: 11,
+                            onChanged: (v) =>
+                                setDialogState(() => columnCount = v.round()),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Text(
-                'Kapasite: ${rowCount * columnCount} koltuk',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
+                  ],
+                ),
+                Text(
+                  'Kapasite: ${rowCount * columnCount} koltuk',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                // Salon Önizlemesi
+                _buildRoomPreviewWidget(rowCount, columnCount),
+              ],
+            ),
           ),
           actions: [
             TextButton(

@@ -1,8 +1,7 @@
 Acil Yapılacaklar:
 Okul Yönetimi Salon kaydı yapılırken salonu canlı olarak önizleme eklenecek.
-Sıra olarak belirtilen kutucuklar renkli olacak
-Kelebek sistemi dağıtımın sonucunda hangi öğrenci hangi sınıfta olduğunu yazan bir kağıt olacak.
- Türkçe karakter desteği eklenecek.
+
+
 
 Düşük aciliyet
 E-posta adresi değiştirme.
